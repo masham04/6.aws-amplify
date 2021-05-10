@@ -17,7 +17,7 @@ export default function Home() {
         title: todoTitleRef.current.value,
         done: false,
       }
-      const data = await API.graphql({
+      await API.graphql({
         query: addTodo,
         variables: {
           todo: todo,
