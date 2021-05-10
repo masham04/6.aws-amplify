@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import { addTodo } from "../graphql/mutations"
 import { getTodos } from "../graphql/queries"
+import { deleteTodo } from "../graphql/mutations"
 import { API } from "aws-amplify"
 import shortid from "shortid"
 
@@ -9,6 +10,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [todoData, setTodoData] = useState(null)
   const todoTitleRef = useRef("")
+
+  console.log(todoData)
 
   const addTodoMutation = async () => {
     try {
@@ -27,6 +30,20 @@ export default function Home() {
       fetchTodos()
     } catch (e) {
       console.log(e)
+    }
+  }
+  const deleteTodoMutation = async (el) => {
+
+    try {
+      await API.graphql({
+        query: deleteTodo,
+        variables: {
+          todoId: el,
+        },
+      })
+      fetchTodos()
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -61,6 +78,7 @@ export default function Home() {
             todoData.data.getTodos.map((item, ind) => (
               <div style={{ marginLeft: "1rem", marginTop: "2rem" }} key={ind}>
                 {item.title}
+                <button onClick={() => { deleteTodoMutation(item.id) }}>Delete</button>
               </div>
             ))}
         </div>
